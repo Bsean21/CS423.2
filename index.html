@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tourist Spot Review Sentiment Analyzer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">  <title>Tourist Spot Review Sentiment Analyzer</title>
+  <title>Submit Review</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
@@ -11,95 +11,23 @@
 </head>
 <body>
   <main class="app-shell">
-    <section class="app-card">
+    <section class="app-card app-card--compact">
       <header class="app-header">
-        <h1>Flask Review Sentiment Analysis</h1>
-        <p>Enter review text to analyze sentiment using the notebook-based NLP model served by Flask.</p>
-        <p id="server-status" class="server-status">Checking Flask model status...</p>
+        <h1>Share Your Review</h1>
+        <p>Type your review below. It will be sent directly to the admin dashboard for analysis.</p>
       </header>
 
       <section class="input-panel">
         <div class="field-head">
-          <label for="review-input">Enter tourist review</label>
-          <span class="field-note">One review per line</span>
+          <label for="review-input">Your review</label>
         </div>
-        <textarea id="review-input" rows="5" placeholder="e.g., The view was amazing but the entrance line was too long..."></textarea>
+        <textarea id="review-input" rows="6" placeholder="Type your review here..."></textarea>
 
-        <div class="action-row">
-          <button id="analyze-all-btn" class="button button--primary">Analyze Review</button>
-          <button id="load-sample-btn" class="button button--soft">Load Sample</button>
-          <label class="upload">
-            <input id="file-input" type="file" accept=".txt,.csv">
-            <span>Upload File</span>
-          </label>
-        </div>
-        <p class="helper-note">Flask expects a local <code>Reviews.csv</code> beside <code>app.py</code> to train the notebook-based model.</p>
-      </section>
-
-      <section class="results-panel">
-        <div class="section-head">
-          <h2>Results</h2>
-          <button id="clear-all-btn" class="text-button" type="button">Clear All</button>
+        <div class="action-row">us"
+          <button id="submit-review-btn" class="button button--primary">Submit Review</button>
         </div>
 
-        <div class="summary-strip">
-          <article class="mini-stat mini-stat--positive">
-            <span>Positive</span>
-            <strong id="positive-count">0</strong>
-          </article>
-          <article class="mini-stat mini-stat--neutral">
-            <span>Neutral</span>
-            <strong id="neutral-count">0</strong>
-          </article>
-          <article class="mini-stat mini-stat--negative">
-            <span>Negative</span>
-            <strong id="negative-count">0</strong>
-          </article>
-          <article class="mini-stat">
-            <span>Total</span>
-            <strong id="total-count">0</strong>
-          </article>
-        </div>
-
-        <div id="results-table-wrap" class="results-list empty-state">
-          No reviews analyzed yet.
-        </div>
-      </section>
-
-      <section class="details-grid">
-        <article class="detail-card">
-          <div class="section-head section-head--compact">
-            <h3>Preprocessed Text</h3>
-            <button id="preprocess-btn" class="button button--mini" type="button">Run</button>
-          </div>
-          <div id="preprocess-preview" class="detail-body empty-state">No preprocessing output yet.</div>
-        </article>
-
-        <article class="detail-card">
-          <div class="section-head section-head--compact">
-            <h3>Word Frequency</h3>
-            <button id="frequency-btn" class="button button--mini" type="button">Run</button>
-          </div>
-          <div id="frequency-chart" class="detail-body empty-state">Word frequency data will appear here.</div>
-        </article>
-
-        <article class="detail-card detail-card--wide">
-          <div class="section-head section-head--compact">
-            <h3>Summary Report</h3>
-            <button id="report-btn" class="button button--mini" type="button">Generate</button>
-          </div>
-          <div class="theme-columns">
-            <div>
-              <h4>Positive Themes</h4>
-              <ul id="positive-themes" class="tag-list empty-state">No data yet.</ul>
-            </div>
-            <div>
-              <h4>Negative Issues</h4>
-              <ul id="negative-themes" class="tag-list empty-state">No data yet.</ul>
-            </div>
-          </div>
-          <p id="summary-report" class="detail-body summary-copy empty-state">Generate a report to summarize overall customer feedback.</p>
-        </article>
+        <p id="submit-message" class="helper-note">Your review will appear in the admin page after submission.</p>
       </section>
     </section>
   </main>

@@ -1,30 +1,34 @@
-# Flask Sentiment App
+# Customer and Admin Review Flow
 
-This app connects the UI to a Flask backend based on the notebook pipeline from `FINAL_ACT3_AMAZON-FOOD-REVIEW (1).ipynb`.
+This version separates the app into two interfaces:
 
-## Expected dataset
+- `index.html` for customers to submit a review only
+- `admin.html` for admins to view stored reviews and analyze them
 
-Place `Reviews.csv` in this folder:
+## Routes
 
-`C:\Users\ADMIN\Documents\Codex\2026-04-21-files-mentioned-by-the-user-the-2`
+- `/` customer review form
+- `/admin` admin dashboard
 
-Or set an environment variable before running:
+## Dataset
 
-`REVIEWS_CSV=C:\path\to\Reviews.csv`
+The app is now configured for:
 
-## Run
+`C:\Users\ADMIN\OneDrive\Documents\Syntement Analysis\Amaya Review.csv`
 
-1. Install dependencies from `requirements.txt`.
-2. Start Flask with `python app.py`.
-3. Open `http://127.0.0.1:5000`.
+You can still override that path with `REVIEWS_CSV`.
 
-## Notebook flow mirrored in the backend
+## Dataset columns used
 
-- Uses `Text` and `Score`
-- Maps scores `>= 4` to `positive`
-- Maps scores `<= 2` to `negative`
-- Drops neutral reviews
-- Balances positive and negative classes
-- Applies negation handling and text cleaning
-- Uses `TfidfVectorizer(ngram_range=(1, 2))`
-- Trains `MultinomialNB`
+- `review`
+- `sentiment`
+
+Sentiment labels are normalized as:
+
+- `-1` -> `negative`
+- `0` -> `neutral`
+- `1` -> `positive`
+
+## Note
+
+Your OneDrive `app.py` still expects `Text` and `Score`, which does not match this dataset. The workspace version has been updated to use the real CSV structure.
