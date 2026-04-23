@@ -331,6 +331,64 @@ def export_summary_csv(analysis: dict) -> str:
     return buffer.getvalue()
 
 
+def export_combined_csv(analysis: dict) -> str:
+    buffer = StringIO()
+    writer = csv.writer(buffer)
+
+    writer.writerow(["SUMMARY"])
+    writer.writerow(["metric", "value"])
+    writer.writerow(["positive_reviews", analysis["counts"]["positive"]])
+    writer.writerow(["neutral_reviews", analysis["counts"]["neutral"]])
+    writer.writerow(["negative_reviews", analysis["counts"]["negative"]])
+    writer.writerow(["summary", analysis["summary"]])
+    writer.writerow(["positive_themes", " | ".join(analysis["positive_themes"])])
+    writer.writerow(["neutral_themes", " | ".join(analysis["neutral_themes"])])
+    writer.writerow(["negative_themes", " | ".join(analysis["negative_themes"])])
+    writer.writerow([])
+    writer.writerow(["REVIEW_DETAILS"])
+    writer.writerow(
+        [
+            "review_id",
+            "review_text",
+            "final_sentiment",
+            "final_confidence",
+            "sentence_index",
+            "sentence_text",
+            "sentence_sentiment",
+            "sentence_confidence",
+            "tokens",
+            "dependencies",
+        ]
+    )
+
+    processed_map = {item["id"]: item for item in analysis["processed_reviews"]}
+    result_map = {item["id"]: item for item in analysis["results"]}
+
+    for review_id, processed in processed_map.items():
+        result = result_map.get(review_id, {})
+        for sentence_detail in processed["sentence_details"]:
+            dependencies = "; ".join(
+                f"{dep['word']}({dep['dep']} -> {dep['head']})"
+                for dep in sentence_detail["dependencies"]
+            )
+            writer.writerow(
+                [
+                    review_id,
+                    processed["original"],
+                    result.get("sentiment", ""),
+                    result.get("confidence", ""),
+                    sentence_detail["sentence_index"],
+                    sentence_detail["sentence"],
+                    sentence_detail["sentiment"],
+                    sentence_detail["confidence"],
+                    " | ".join(sentence_detail["tokens"]),
+                    dependencies,
+                ]
+            )
+
+    return buffer.getvalue()
+
+
 store = ReviewStore(STORAGE_PATH)
 service = NotebookSentimentService()
 app = Flask(__name__)
@@ -372,35 +430,19 @@ def analyze_reviews():
     return jsonify(service.analyze_reviews(reviews))
 
 
-@app.get("/api/admin/export/reviews.csv")
-def download_reviews_csv():
+@app.get("/api/admin/export/all.csv")
+def download_all_csv():
     reviews = store.load()
     if not reviews:
         return jsonify({"error": "No submitted reviews available for export."}), 400
     if not service.ready:
         return jsonify({"error": service.message}), 503
     analysis = service.analyze_reviews(reviews)
-    csv_content = export_reviews_csv(analysis)
+    csv_content = export_combined_csv(analysis)
     return Response(
         csv_content,
         mimetype="text/csv",
-        headers={"Content-Disposition": "attachment; filename=analyzed_reviews.csv"},
-    )
-
-
-@app.get("/api/admin/export/summary.csv")
-def download_summary_csv():
-    reviews = store.load()
-    if not reviews:
-        return jsonify({"error": "No submitted reviews available for export."}), 400
-    if not service.ready:
-        return jsonify({"error": service.message}), 503
-    analysis = service.analyze_reviews(reviews)
-    csv_content = export_summary_csv(analysis)
-    return Response(
-        csv_content,
-        mimetype="text/csv",
-        headers={"Content-Disposition": "attachment; filename=summary_report.csv"},
+        headers={"Content-Disposition": "attachment; filename=admin_review_export.csv"},
     )
 
 

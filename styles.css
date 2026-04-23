@@ -151,6 +151,12 @@ textarea:focus {
   color: var(--ink);
 }
 
+.button-group {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  max-width: 100%;
+}
+
 .text-button {
   background: transparent;
   color: #ff0000;
@@ -176,6 +182,21 @@ textarea:focus {
   border: 1px solid #e2e7f1;
   border-radius: 14px;
   padding: 12px 14px;
+}
+
+.filter-button {
+  text-align: left;
+  cursor: pointer;
+  transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+}
+
+.filter-button:hover {
+  transform: translateY(-1px);
+}
+
+.filter-button.is-active {
+  border-color: var(--button);
+  box-shadow: 0 0 0 3px rgba(26, 103, 248, 0.12);
 }
 
 .mini-stat span {

@@ -1,32 +1,57 @@
 [
   {
     "id": 1,
-    "review": "the place was good but the service was bad",
-    "created_at": "2026-04-23 14:44:07"
+    "review": "the place is ugly, the staff was rude and the food taste bad",
+    "created_at": "2026-04-23 15:24:06"
   },
   {
     "id": 2,
-    "review": "The place was good but the staffs are not accomodating.",
-    "created_at": "2026-04-23 14:46:22"
+    "review": "The system is very easy to use and the interface is clean. I was able to complete my task quickly without any issues.",
+    "created_at": "2026-04-23 15:25:38"
   },
   {
     "id": 3,
-    "review": "The staff named Sean is so mean.",
-    "created_at": "2026-04-23 14:46:35"
+    "review": "I experienced multiple errors while using the system. It kept crashing and I lost my progress several times.",
+    "created_at": "2026-04-23 15:25:47"
   },
   {
     "id": 4,
-    "review": "I like here, it's remind me the creation of God.",
-    "created_at": "2026-04-23 14:46:37"
+    "review": "The system works as expected. It has the basic features needed, but nothing particularly impressive.",
+    "created_at": "2026-04-23 15:25:54"
   },
   {
     "id": 5,
-    "review": "the swimming pool was dirty",
-    "created_at": "2026-04-23 14:46:53"
+    "review": "I really like how fast the system responds. It saves me a lot of time compared to other tools.",
+    "created_at": "2026-04-23 15:26:02"
   },
   {
     "id": 6,
-    "review": "I thought the resort was good but in reality it's not giving",
-    "created_at": "2026-04-23 14:47:14"
+    "review": "The design is confusing and not user-friendly. It took me a while to figure out how things work.",
+    "created_at": "2026-04-23 15:26:08"
+  },
+  {
+    "id": 7,
+    "review": "The system is okay. Some features work well, while others still need improvement.",
+    "created_at": "2026-04-23 15:26:14"
+  },
+  {
+    "id": 8,
+    "review": "Great experience overall! The features are useful and everything runs smoothly.",
+    "created_at": "2026-04-23 15:26:20"
+  },
+  {
+    "id": 9,
+    "review": "I am not satisfied with the performance. It is slow and sometimes does not respond.",
+    "created_at": "2026-04-23 15:26:31"
+  },
+  {
+    "id": 10,
+    "review": "It does what it is supposed to do, but I think there is still room for enhancement.",
+    "created_at": "2026-04-23 15:26:38"
+  },
+  {
+    "id": 11,
+    "review": "The system is reliable and efficient. I would definitely recommend it to others.",
+    "created_at": "2026-04-23 15:26:45"
   }
 ]

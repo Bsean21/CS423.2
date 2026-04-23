@@ -6,16 +6,24 @@ const neutralThemes = document.getElementById("neutral-themes");
 const negativeThemes = document.getElementById("negative-themes");
 const summaryChart = document.getElementById("summary-chart");
 const summaryReport = document.getElementById("summary-report");
+const filterButtons = {
+  all: document.getElementById("filter-all"),
+  positive: document.getElementById("filter-positive"),
+  neutral: document.getElementById("filter-neutral"),
+  negative: document.getElementById("filter-negative"),
+};
+let currentResults = [];
+let activeFilter = "all";
 
 document.getElementById("refresh-btn").addEventListener("click", loadStoredReviews);
 document.getElementById("analyze-btn").addEventListener("click", analyzeStoredReviews);
-document.getElementById("download-reviews-btn").addEventListener("click", () => {
-  window.location.href = "/api/admin/export/reviews.csv";
-});
-document.getElementById("download-summary-btn").addEventListener("click", () => {
-  window.location.href = "/api/admin/export/summary.csv";
+document.getElementById("download-export-btn").addEventListener("click", () => {
+  window.location.href = "/api/admin/export/all.csv";
 });
 document.getElementById("clear-btn").addEventListener("click", clearStoredReviews);
+Object.entries(filterButtons).forEach(([key, button]) => {
+  button.addEventListener("click", () => setActiveFilter(key));
+});
 
 async function checkAdminStatus() {
   return;
@@ -82,21 +90,12 @@ function renderStoredReviews(reviews) {
 }
 
 function renderAnalysis(data) {
+  currentResults = data.results || [];
   document.getElementById("positive-count").textContent = data.counts.positive || 0;
   document.getElementById("neutral-count").textContent = data.counts.neutral || 0;
   document.getElementById("negative-count").textContent = data.counts.negative || 0;
   document.getElementById("total-count").textContent = data.results.length || 0;
-
-  reviewList.className = "results-list";
-  reviewList.innerHTML = data.results.length ? data.results.map((entry) => `
-    <article class="result-card result-card--${entry.sentiment.toLowerCase()}">
-      <p class="result-line">[Review] <strong>Review:</strong> ${escapeHtml(entry.original)}</p>
-      <p class="result-line prediction prediction--${entry.sentiment.toLowerCase()}">
-        [${entry.sentiment}] Prediction: ${entry.sentiment} Review (${Number(entry.confidence).toFixed(2)}%)
-      </p>
-      <span class="score-line">Stored review id: ${entry.id}</span>
-    </article>
-  `).join("") : "No submitted reviews yet.";
+  renderFilteredResults();
 
   preprocessPreview.className = "detail-body";
   preprocessPreview.innerHTML = data.processed_reviews.length ? data.processed_reviews.map((entry) => `
@@ -148,10 +147,13 @@ function renderThemeList(element, themes, fallback) {
 }
 
 function resetAnalysis() {
+  currentResults = [];
+  activeFilter = "all";
   document.getElementById("positive-count").textContent = "0";
   document.getElementById("neutral-count").textContent = "0";
   document.getElementById("negative-count").textContent = "0";
   document.getElementById("total-count").textContent = "0";
+  setActiveFilter("all");
   preprocessPreview.className = "detail-body empty-state";
   preprocessPreview.textContent = "Analysis output will appear here.";
   frequencyChart.className = "detail-body empty-state";
@@ -166,6 +168,31 @@ function resetAnalysis() {
   summaryChart.textContent = "Run analysis to generate the bar chart summary.";
   summaryReport.className = "detail-body summary-copy empty-state";
   summaryReport.textContent = "Run analysis to generate a report.";
+}
+
+function setActiveFilter(filterKey) {
+  activeFilter = filterKey;
+  Object.entries(filterButtons).forEach(([key, button]) => {
+    button.classList.toggle("is-active", key === filterKey);
+  });
+  renderFilteredResults();
+}
+
+function renderFilteredResults() {
+  const filteredResults = activeFilter === "all"
+    ? currentResults
+    : currentResults.filter((entry) => entry.sentiment.toLowerCase() === activeFilter);
+
+  reviewList.className = "results-list";
+  reviewList.innerHTML = filteredResults.length ? filteredResults.map((entry) => `
+    <article class="result-card result-card--${entry.sentiment.toLowerCase()}">
+      <p class="result-line">[Review] <strong>Review:</strong> ${escapeHtml(entry.original)}</p>
+      <p class="result-line prediction prediction--${entry.sentiment.toLowerCase()}">
+        [${entry.sentiment}] Prediction: ${entry.sentiment} Review (${Number(entry.confidence).toFixed(2)}%)
+      </p>
+      <span class="score-line">Stored review id: ${entry.id}</span>
+    </article>
+  `).join("") : `No ${activeFilter === "all" ? "" : activeFilter} reviews found.`;
 }
 
 function renderSummaryChart(counts, total) {

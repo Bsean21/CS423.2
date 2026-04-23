@@ -23,29 +23,28 @@
           <div class="button-group">
             <button id="refresh-btn" class="button button--soft" type="button">Refresh</button>
             <button id="analyze-btn" class="button button--primary button--fit" type="button">Analyze All</button>
-            <button id="download-reviews-btn" class="button button--soft button--fit" type="button">Download Reviews CSV</button>
-            <button id="download-summary-btn" class="button button--soft button--fit" type="button">Download Summary CSV</button>
+            <button id="download-export-btn" class="button button--soft button--fit" type="button">Download CSV</button>
             <button id="clear-btn" class="text-button" type="button">Clear Stored</button>
           </div>
         </div>
 
         <div class="summary-strip">
-          <article class="mini-stat mini-stat--positive">
+          <button id="filter-positive" class="mini-stat mini-stat--positive filter-button" type="button">
             <span>Positive</span>
             <strong id="positive-count">0</strong>
-          </article>
-          <article class="mini-stat mini-stat--neutral">
+          </button>
+          <button id="filter-neutral" class="mini-stat mini-stat--neutral filter-button" type="button">
             <span>Neutral</span>
             <strong id="neutral-count">0</strong>
-          </article>
-          <article class="mini-stat mini-stat--negative">
+          </button>
+          <button id="filter-negative" class="mini-stat mini-stat--negative filter-button" type="button">
             <span>Negative</span>
             <strong id="negative-count">0</strong>
-          </article>
-          <article class="mini-stat">
+          </button>
+          <button id="filter-all" class="mini-stat filter-button is-active" type="button">
             <span>Total</span>
             <strong id="total-count">0</strong>
-          </article>
+          </button>
         </div>
 
         <div id="review-list" class="results-list empty-state">No submitted reviews yet.</div>
