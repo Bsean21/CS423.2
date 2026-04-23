@@ -95,8 +95,17 @@ function renderAnalysis(data) {
     <article class="preprocess-entry">
       <strong>Review ${entry.id}</strong>
       <p>${escapeHtml(entry.original)}</p>
-      <p><strong>Negation:</strong> ${escapeHtml(entry.negation_text)}</p>
+      <p><strong>Cleaning:</strong> ${entry.cleaning_steps.map(escapeHtml).join(", ")}</p>
       <p><strong>Cleaned:</strong> ${escapeHtml(entry.cleaned_text)}</p>
+      <p><strong>Nested sentence tokens:</strong> ${entry.nested_sentence_tokens.map((tokens) => `[${tokens.map(escapeHtml).join(", ")}]`).join(" ")}</p>
+      ${entry.sentence_details.map((detail) => `
+        <div class="preprocess-entry">
+          <p><strong>Sentence ${detail.sentence_index}:</strong> ${escapeHtml(detail.sentence)}</p>
+          <p><strong>Tokens:</strong> ${detail.tokens.map(escapeHtml).join(", ")}</p>
+          <p><strong>Dependencies:</strong> ${detail.dependencies.map((dep) => `${escapeHtml(dep.word)}(${escapeHtml(dep.dep)} -> ${escapeHtml(dep.head)})`).join(", ")}</p>
+          <p><strong>Sentence sentiment:</strong> ${escapeHtml(detail.sentiment)} (${Number(detail.confidence).toFixed(2)}%)</p>
+        </div>
+      `).join("")}
     </article>
   `).join("") : "Analysis output will appear here.";
 
