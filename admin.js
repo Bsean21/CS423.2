@@ -2,11 +2,19 @@ const reviewList = document.getElementById("review-list");
 const preprocessPreview = document.getElementById("preprocess-preview");
 const frequencyChart = document.getElementById("frequency-chart");
 const positiveThemes = document.getElementById("positive-themes");
+const neutralThemes = document.getElementById("neutral-themes");
 const negativeThemes = document.getElementById("negative-themes");
+const summaryChart = document.getElementById("summary-chart");
 const summaryReport = document.getElementById("summary-report");
 
 document.getElementById("refresh-btn").addEventListener("click", loadStoredReviews);
 document.getElementById("analyze-btn").addEventListener("click", analyzeStoredReviews);
+document.getElementById("download-reviews-btn").addEventListener("click", () => {
+  window.location.href = "/api/admin/export/reviews.csv";
+});
+document.getElementById("download-summary-btn").addEventListener("click", () => {
+  window.location.href = "/api/admin/export/summary.csv";
+});
 document.getElementById("clear-btn").addEventListener("click", clearStoredReviews);
 
 async function checkAdminStatus() {
@@ -121,7 +129,9 @@ function renderAnalysis(data) {
   `).join("") : "Word frequency data will appear here.";
 
   renderThemeList(positiveThemes, data.positive_themes, "No data yet.");
+  renderThemeList(neutralThemes, data.neutral_themes || [], "No data yet.");
   renderThemeList(negativeThemes, data.negative_themes, "No data yet.");
+  renderSummaryChart(data.counts, data.results.length || 0);
   summaryReport.className = "detail-body summary-copy";
   summaryReport.textContent = data.summary || "Run analysis to generate a report.";
 }
@@ -148,10 +158,42 @@ function resetAnalysis() {
   frequencyChart.textContent = "Word frequency data will appear here.";
   positiveThemes.className = "tag-list empty-state";
   positiveThemes.textContent = "No data yet.";
+  neutralThemes.className = "tag-list empty-state";
+  neutralThemes.textContent = "No data yet.";
   negativeThemes.className = "tag-list empty-state";
   negativeThemes.textContent = "No data yet.";
+  summaryChart.className = "chart-card empty-state";
+  summaryChart.textContent = "Run analysis to generate the bar chart summary.";
   summaryReport.className = "detail-body summary-copy empty-state";
   summaryReport.textContent = "Run analysis to generate a report.";
+}
+
+function renderSummaryChart(counts, total) {
+  if (!total) {
+    summaryChart.className = "chart-card empty-state";
+    summaryChart.textContent = "Run analysis to generate the bar chart summary.";
+    return;
+  }
+
+  const rows = [
+    { label: "Positive", key: "positive", count: counts.positive || 0, cls: "chart-fill--positive" },
+    { label: "Neutral", key: "neutral", count: counts.neutral || 0, cls: "chart-fill--neutral" },
+    { label: "Negative", key: "negative", count: counts.negative || 0, cls: "chart-fill--negative" },
+  ];
+
+  summaryChart.className = "chart-card";
+  summaryChart.innerHTML = rows.map((row) => {
+    const percent = ((row.count / total) * 100).toFixed(1);
+    return `
+      <div class="chart-row">
+        <strong>${row.label}</strong>
+        <div class="chart-track">
+          <div class="chart-fill ${row.cls}" style="width: ${percent}%"></div>
+        </div>
+        <span>${row.count} (${percent}%)</span>
+      </div>
+    `;
+  }).join("");
 }
 
 function escapeHtml(value) {

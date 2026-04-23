@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+import csv
 import json
+from io import StringIO
 import re
 from datetime import datetime
 from pathlib import Path
 
-from flask import Flask, jsonify, request, send_from_directory
+from flask import Flask, jsonify, request, send_from_directory, Response
 
 try:
     import spacy
@@ -208,6 +210,7 @@ class NotebookSentimentService:
         results = []
         counts = {"positive": 0, "neutral": 0, "negative": 0}
         positive_themes = []
+        neutral_themes = []
         negative_themes = []
         sentence_frequency = []
 
@@ -241,6 +244,8 @@ class NotebookSentimentService:
                 )
                 if sentence_detail["sentiment"] == "positive":
                     positive_themes.append(sentence_detail["sentence"])
+                if sentence_detail["sentiment"] == "neutral":
+                    neutral_themes.append(sentence_detail["sentence"])
                 if sentence_detail["sentiment"] == "negative":
                     negative_themes.append(sentence_detail["sentence"])
 
@@ -260,9 +265,70 @@ class NotebookSentimentService:
             "results": results,
             "word_frequency": sentence_frequency[:8],
             "positive_themes": list(dict.fromkeys(positive_themes))[:6],
+            "neutral_themes": list(dict.fromkeys(neutral_themes))[:6],
             "negative_themes": list(dict.fromkeys(negative_themes))[:6],
             "summary": summary,
         }
+
+
+def export_reviews_csv(analysis: dict) -> str:
+    buffer = StringIO()
+    writer = csv.writer(buffer)
+    writer.writerow(
+        [
+            "review_id",
+            "review_text",
+            "final_sentiment",
+            "final_confidence",
+            "sentence_index",
+            "sentence_text",
+            "sentence_sentiment",
+            "sentence_confidence",
+            "tokens",
+            "dependencies",
+        ]
+    )
+
+    processed_map = {item["id"]: item for item in analysis["processed_reviews"]}
+    result_map = {item["id"]: item for item in analysis["results"]}
+
+    for review_id, processed in processed_map.items():
+        result = result_map.get(review_id, {})
+        for sentence_detail in processed["sentence_details"]:
+            dependencies = "; ".join(
+                f"{dep['word']}({dep['dep']} -> {dep['head']})"
+                for dep in sentence_detail["dependencies"]
+            )
+            writer.writerow(
+                [
+                    review_id,
+                    processed["original"],
+                    result.get("sentiment", ""),
+                    result.get("confidence", ""),
+                    sentence_detail["sentence_index"],
+                    sentence_detail["sentence"],
+                    sentence_detail["sentiment"],
+                    sentence_detail["confidence"],
+                    " | ".join(sentence_detail["tokens"]),
+                    dependencies,
+                ]
+            )
+
+    return buffer.getvalue()
+
+
+def export_summary_csv(analysis: dict) -> str:
+    buffer = StringIO()
+    writer = csv.writer(buffer)
+    writer.writerow(["metric", "value"])
+    writer.writerow(["positive_reviews", analysis["counts"]["positive"]])
+    writer.writerow(["neutral_reviews", analysis["counts"]["neutral"]])
+    writer.writerow(["negative_reviews", analysis["counts"]["negative"]])
+    writer.writerow(["summary", analysis["summary"]])
+    writer.writerow(["positive_themes", " | ".join(analysis["positive_themes"])])
+    writer.writerow(["neutral_themes", " | ".join(analysis["neutral_themes"])])
+    writer.writerow(["negative_themes", " | ".join(analysis["negative_themes"])])
+    return buffer.getvalue()
 
 
 store = ReviewStore(STORAGE_PATH)
@@ -304,6 +370,38 @@ def analyze_reviews():
     if not service.ready:
         return jsonify({"error": service.message}), 503
     return jsonify(service.analyze_reviews(reviews))
+
+
+@app.get("/api/admin/export/reviews.csv")
+def download_reviews_csv():
+    reviews = store.load()
+    if not reviews:
+        return jsonify({"error": "No submitted reviews available for export."}), 400
+    if not service.ready:
+        return jsonify({"error": service.message}), 503
+    analysis = service.analyze_reviews(reviews)
+    csv_content = export_reviews_csv(analysis)
+    return Response(
+        csv_content,
+        mimetype="text/csv",
+        headers={"Content-Disposition": "attachment; filename=analyzed_reviews.csv"},
+    )
+
+
+@app.get("/api/admin/export/summary.csv")
+def download_summary_csv():
+    reviews = store.load()
+    if not reviews:
+        return jsonify({"error": "No submitted reviews available for export."}), 400
+    if not service.ready:
+        return jsonify({"error": service.message}), 503
+    analysis = service.analyze_reviews(reviews)
+    csv_content = export_summary_csv(analysis)
+    return Response(
+        csv_content,
+        mimetype="text/csv",
+        headers={"Content-Disposition": "attachment; filename=summary_report.csv"},
+    )
 
 
 @app.get("/")

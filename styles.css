@@ -313,6 +313,49 @@ textarea:focus {
   flex: 1 1 240px;
 }
 
+.chart-card {
+  margin-top: 16px;
+  background: #fafbff;
+  border: 1px solid #edf0f6;
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.chart-row {
+  display: grid;
+  grid-template-columns: 90px 1fr 88px;
+  gap: 12px;
+  align-items: center;
+}
+
+.chart-row + .chart-row {
+  margin-top: 12px;
+}
+
+.chart-track {
+  height: 14px;
+  border-radius: 999px;
+  background: #e4eaf5;
+  overflow: hidden;
+}
+
+.chart-fill {
+  height: 100%;
+  border-radius: inherit;
+}
+
+.chart-fill--positive {
+  background: linear-gradient(90deg, #39c778, #1fa35b);
+}
+
+.chart-fill--neutral {
+  background: linear-gradient(90deg, #f1c55c, #d2a034);
+}
+
+.chart-fill--negative {
+  background: linear-gradient(90deg, #ff7a70, #ef3a37);
+}
+
 .tag-list {
   list-style: none;
   padding: 0;
@@ -352,6 +395,10 @@ textarea:focus {
   }
 
   .bar-row {
+    grid-template-columns: 1fr;
+  }
+
+  .chart-row {
     grid-template-columns: 1fr;
   }
 }

@@ -1,62 +1,32 @@
 [
   {
     "id": 1,
-    "review": "it was a good place but the sevice was bad",
-    "created_at": "2026-04-23 10:49:50"
+    "review": "the place was good but the service was bad",
+    "created_at": "2026-04-23 14:44:07"
   },
   {
     "id": 2,
-    "review": "great place but bad service",
-    "created_at": "2026-04-23 10:51:05"
+    "review": "The place was good but the staffs are not accomodating.",
+    "created_at": "2026-04-23 14:46:22"
   },
   {
     "id": 3,
-    "review": "it was a good place",
-    "created_at": "2026-04-23 10:51:29"
+    "review": "The staff named Sean is so mean.",
+    "created_at": "2026-04-23 14:46:35"
   },
   {
     "id": 4,
-    "review": "it was good",
-    "created_at": "2026-04-23 11:01:50"
+    "review": "I like here, it's remind me the creation of God.",
+    "created_at": "2026-04-23 14:46:37"
   },
   {
     "id": 5,
-    "review": "it was not good",
-    "created_at": "2026-04-23 11:06:55"
+    "review": "the swimming pool was dirty",
+    "created_at": "2026-04-23 14:46:53"
   },
   {
     "id": 6,
-    "review": "the place was great",
-    "created_at": "2026-04-23 11:08:45"
-  },
-  {
-    "id": 7,
-    "review": "it was good. but it the service is bad and the pool was filthy",
-    "created_at": "2026-04-23 11:26:39"
-  },
-  {
-    "id": 8,
-    "review": "It was bad",
-    "created_at": "2026-04-23 11:33:22"
-  },
-  {
-    "id": 9,
-    "review": "i dont like the resort its too hot there are only few trees there, the atmosphere is no giving.",
-    "created_at": "2026-04-23 12:01:00"
-  },
-  {
-    "id": 10,
-    "review": "The view in Amaya is so ugly, I don't wanna go back there. My ghaadd",
-    "created_at": "2026-04-23 12:14:35"
-  },
-  {
-    "id": 11,
-    "review": "it was bad\ud83d\udc4e\ud83c\udffb",
-    "created_at": "2026-04-23 12:55:26"
-  },
-  {
-    "id": 12,
-    "review": "it was bad\ud83d\udc4e\ud83c\udffb",
-    "created_at": "2026-04-23 12:55:37"
+    "review": "I thought the resort was good but in reality it's not giving",
+    "created_at": "2026-04-23 14:47:14"
   }
 ]

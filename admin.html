@@ -23,6 +23,8 @@
           <div class="button-group">
             <button id="refresh-btn" class="button button--soft" type="button">Refresh</button>
             <button id="analyze-btn" class="button button--primary button--fit" type="button">Analyze All</button>
+            <button id="download-reviews-btn" class="button button--soft button--fit" type="button">Download Reviews CSV</button>
+            <button id="download-summary-btn" class="button button--soft button--fit" type="button">Download Summary CSV</button>
             <button id="clear-btn" class="text-button" type="button">Clear Stored</button>
           </div>
         </div>
@@ -74,10 +76,15 @@
               <ul id="positive-themes" class="tag-list empty-state">No data yet.</ul>
             </div>
             <div>
+              <h4>Neutral Notes</h4>
+              <ul id="neutral-themes" class="tag-list empty-state">No data yet.</ul>
+            </div>
+            <div>
               <h4>Negative Issues</h4>
               <ul id="negative-themes" class="tag-list empty-state">No data yet.</ul>
             </div>
           </div>
+          <div id="summary-chart" class="chart-card empty-state">Run analysis to generate the bar chart summary.</div>
           <p id="summary-report" class="detail-body summary-copy empty-state">Run analysis to generate a report.</p>
         </article>
       </section>
