@@ -53,5 +53,55 @@
     "id": 11,
     "review": "The system is reliable and efficient. I would definitely recommend it to others.",
     "created_at": "2026-04-23 15:26:45"
+  },
+  {
+    "id": 12,
+    "review": "The view at Amaya is breathtaking, especially at night. The staff were accommodating and the place felt very relaxing.",
+    "created_at": "2026-04-23 15:40:13"
+  },
+  {
+    "id": 13,
+    "review": "The entrance fee is too expensive for what you get. Some areas were not well-maintained.",
+    "created_at": "2026-04-23 15:40:21"
+  },
+  {
+    "id": 14,
+    "review": "The resort has a nice view, but the food is just average. It\u2019s okay for a short visit.",
+    "created_at": "2026-04-23 15:40:36"
+  },
+  {
+    "id": 15,
+    "review": "We enjoyed the infinity pool and the overlooking city lights. Perfect place to unwind with friends.",
+    "created_at": "2026-04-23 15:40:42"
+  },
+  {
+    "id": 16,
+    "review": "Service was slow during peak hours. We had to wait a long time for our orders.",
+    "created_at": "2026-04-23 15:40:48"
+  },
+  {
+    "id": 17,
+    "review": "The place is clean and organized, but it gets crowded on weekends.",
+    "created_at": "2026-04-23 15:40:56"
+  },
+  {
+    "id": 18,
+    "review": "Very Instagram-worthy spot! The ambiance is great and the staff are friendly.",
+    "created_at": "2026-04-23 15:41:02"
+  },
+  {
+    "id": 19,
+    "review": "Some facilities were not functioning properly, and it affected our overall experience.",
+    "created_at": "2026-04-23 15:41:08"
+  },
+  {
+    "id": 20,
+    "review": "The experience was fine. Nothing extraordinary, but still enjoyable with family.",
+    "created_at": "2026-04-23 15:41:13"
+  },
+  {
+    "id": 21,
+    "review": "Great place for relaxation. The cool breeze and scenic view make it worth visiting.",
+    "created_at": "2026-04-23 15:41:23"
   }
 ]
