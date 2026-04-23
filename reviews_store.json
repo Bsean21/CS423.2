@@ -38,5 +38,25 @@
     "id": 8,
     "review": "It was bad",
     "created_at": "2026-04-23 11:33:22"
+  },
+  {
+    "id": 9,
+    "review": "i dont like the resort its too hot there are only few trees there, the atmosphere is no giving.",
+    "created_at": "2026-04-23 12:01:00"
+  },
+  {
+    "id": 10,
+    "review": "The view in Amaya is so ugly, I don't wanna go back there. My ghaadd",
+    "created_at": "2026-04-23 12:14:35"
+  },
+  {
+    "id": 11,
+    "review": "it was bad\ud83d\udc4e\ud83c\udffb",
+    "created_at": "2026-04-23 12:55:26"
+  },
+  {
+    "id": 12,
+    "review": "it was bad\ud83d\udc4e\ud83c\udffb",
+    "created_at": "2026-04-23 12:55:37"
   }
 ]
