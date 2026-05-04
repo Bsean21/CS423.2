@@ -108,5 +108,15 @@
     "id": 22,
     "review": "the resort was different from the promo picture",
     "created_at": "2026-04-25 07:27:24"
+  },
+  {
+    "id": 23,
+    "review": "the food was \ud83e\udd2e",
+    "created_at": "2026-05-04 14:16:11"
+  },
+  {
+    "id": 24,
+    "review": "\ud83e\udd22\ud83e\udd2e\ud83d\ude01",
+    "created_at": "2026-05-04 14:21:39"
   }
 ]
