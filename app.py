@@ -15,6 +15,11 @@ try:
 except Exception:  # pragma: no cover
     spacy = None
 
+try:
+    import joblib
+except Exception:  # pragma: no cover
+    joblib = None
+
 BASE_DIR = Path(__file__).resolve().parent
 STORAGE_PATH = BASE_DIR / "reviews_store.json"
 VECTORIZER_PATH = Path("C:/Users/ADMIN/Downloads/tfidf_vectorizer.pkl")
