@@ -86,10 +86,8 @@ class NotebookSentimentService:
 
         try:
             self.nlp = spacy.load("en_core_web_sm")
-            with VECTORIZER_PATH.open("rb") as vectorizer_file:
-                self.vectorizer = pickle.load(vectorizer_file)
-            with MODEL_PATH.open("rb") as model_file:
-                self.model = pickle.load(model_file)
+            self.vectorizer = self._load_serialized_object(VECTORIZER_PATH)
+            self.model = self._load_serialized_object(MODEL_PATH)
             self.ready = True
             self.message = (
                 "Sentence-level pipeline ready using spaCy parsing with the saved TF-IDF vectorizer and sentiment model."
@@ -97,6 +95,28 @@ class NotebookSentimentService:
         except Exception as exc:  # pragma: no cover
             self.ready = False
             self.message = f"Pipeline setup failed: {exc}"
+
+    def _load_serialized_object(self, path: Path):
+        pickle_error = None
+
+        try:
+            with path.open("rb") as file_obj:
+                return pickle.load(file_obj)
+        except Exception as exc:  # pragma: no cover
+            pickle_error = exc
+
+        if joblib is not None:
+            try:
+                return joblib.load(path)
+            except Exception as joblib_exc:  # pragma: no cover
+                raise RuntimeError(
+                    f"Could not load {path.name}. pickle error: {pickle_error}; joblib error: {joblib_exc}"
+                ) from joblib_exc
+
+        raise RuntimeError(
+            f"Could not load {path.name}. pickle error: {pickle_error}. "
+            "Install joblib to try an alternate loader."
+        )
 
     def clean_text(self, text: str) -> str:
         text = str(text).lower()
