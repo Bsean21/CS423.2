@@ -103,5 +103,10 @@
     "id": 21,
     "review": "Great place for relaxation. The cool breeze and scenic view make it worth visiting.",
     "created_at": "2026-04-23 15:41:23"
+  },
+  {
+    "id": 22,
+    "review": "the resort was different from the promo picture",
+    "created_at": "2026-04-25 07:27:24"
   }
 ]

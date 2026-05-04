@@ -3,6 +3,7 @@ from __future__ import annotations
 import csv
 import json
 from io import StringIO
+import pickle
 import re
 from datetime import datetime
 from pathlib import Path
@@ -14,14 +15,10 @@ try:
 except Exception:  # pragma: no cover
     spacy = None
 
-try:
-    from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
-except Exception:  # pragma: no cover
-    SentimentIntensityAnalyzer = None
-
-
 BASE_DIR = Path(__file__).resolve().parent
 STORAGE_PATH = BASE_DIR / "reviews_store.json"
+VECTORIZER_PATH = Path("C:/Users/ADMIN/Downloads/tfidf_vectorizer.pkl")
+MODEL_PATH = Path("C:/Users/ADMIN/Downloads/sentiment_model.pkl")
 
 
 class ReviewStore:
@@ -65,24 +62,32 @@ class NotebookSentimentService:
             "Emoji preservation",
         ]
         self.nlp = None
-        self.analyzer = None
+        self.vectorizer = None
+        self.model = None
         self._load_pipeline()
 
     def _load_pipeline(self) -> None:
-        if spacy is None or SentimentIntensityAnalyzer is None:
+        if spacy is None:
             self.ready = False
             self.message = (
-                "Missing dependencies. Install spacy and vaderSentiment, then download "
-                "the en_core_web_sm model."
+                "Missing dependencies. Install spacy and download the en_core_web_sm model."
             )
+            return
+
+        if not VECTORIZER_PATH.exists() or not MODEL_PATH.exists():
+            self.ready = False
+            self.message = "Missing tfidf_vectorizer.pkl or sentiment_model.pkl in Downloads."
             return
 
         try:
             self.nlp = spacy.load("en_core_web_sm")
-            self.analyzer = SentimentIntensityAnalyzer()
+            with VECTORIZER_PATH.open("rb") as vectorizer_file:
+                self.vectorizer = pickle.load(vectorizer_file)
+            with MODEL_PATH.open("rb") as model_file:
+                self.model = pickle.load(model_file)
             self.ready = True
             self.message = (
-                "Sentence-level pipeline ready using spaCy dependency parsing and VADER sentiment."
+                "Sentence-level pipeline ready using spaCy parsing with the saved TF-IDF vectorizer and sentiment model."
             )
         except Exception as exc:  # pragma: no cover
             self.ready = False
@@ -93,49 +98,52 @@ class NotebookSentimentService:
         text = re.sub(r"\s+", " ", text)
         return text.strip()
 
+    @staticmethod
+    def normalize_model_label(value) -> str:
+        mapping = {
+            -1: "negative",
+            0: "neutral",
+            1: "positive",
+            "-1": "negative",
+            "0": "neutral",
+            "1": "positive",
+            "negative": "negative",
+            "neutral": "neutral",
+            "positive": "positive",
+            "neg": "negative",
+            "neu": "neutral",
+            "pos": "positive",
+        }
+        return mapping.get(value, str(value).lower())
+
     def analyze_sentence(self, sentence: str) -> dict:
         sentence_lower = sentence.lower()
         doc = self.nlp(sentence_lower)
 
         has_negation = any(token.dep_ == "neg" for token in doc)
-        base_scores = self.analyzer.polarity_scores(sentence_lower)
+        cleaned_sentence = self.clean_text(sentence_lower)
+        vectorized_sentence = self.vectorizer.transform([cleaned_sentence])
+        raw_prediction = self.model.predict(vectorized_sentence)[0]
+        sentiment = self.normalize_model_label(raw_prediction)
 
-        if "but" in sentence_lower:
-            first, second = sentence_lower.split("but", 1)
-            score1 = self.analyzer.polarity_scores(first.strip())["compound"]
-            score2 = self.analyzer.polarity_scores(second.strip())["compound"]
-
-            if score1 > 0 and score2 < 0:
-                final_score = 0.0
-            else:
-                final_score = (0.4 * score1) + (0.6 * score2)
+        confidence = 0.0
+        scores = {"positive": 0.0, "neutral": 0.0, "negative": 0.0}
+        if hasattr(self.model, "predict_proba"):
+            probabilities = self.model.predict_proba(vectorized_sentence)[0]
+            classes = [self.normalize_model_label(label) for label in self.model.classes_]
+            for label, probability in zip(classes, probabilities):
+                if label in scores:
+                    scores[label] = round(float(probability), 4)
+            confidence = round(max(probabilities) * 100, 2)
         else:
-            final_score = base_scores["compound"]
-
-        pos_score = base_scores["pos"]
-        neg_score = base_scores["neg"]
-
-        if abs(pos_score - neg_score) < 0.1:
-            sentiment = "neutral"
-        elif final_score >= 0.05:
-            sentiment = "positive"
-        elif final_score <= -0.05:
-            sentiment = "negative"
-        else:
-            sentiment = "neutral"
-
-        confidence = round(max(base_scores["pos"], base_scores["neg"], base_scores["neu"]) * 100, 2)
+            confidence = 100.0
 
         return {
             "sentiment": sentiment,
             "confidence": confidence,
-            "compound": round(final_score, 4),
+            "compound": round(scores["positive"] - scores["negative"], 4),
             "has_negation": has_negation,
-            "scores": {
-                "positive": round(base_scores["pos"], 4),
-                "neutral": round(base_scores["neu"], 4),
-                "negative": round(base_scores["neg"], 4),
-            },
+            "scores": scores,
         }
 
     def process_review(self, review_text: str) -> dict:
@@ -203,7 +211,7 @@ class NotebookSentimentService:
         return "neutral", average_confidence
 
     def analyze_reviews(self, reviews: list[dict]) -> dict:
-        if not self.ready or self.nlp is None or self.analyzer is None:
+        if not self.ready or self.nlp is None or self.vectorizer is None or self.model is None:
             raise RuntimeError(self.message or "Pipeline is not ready.")
 
         processed_reviews = []
@@ -251,9 +259,9 @@ class NotebookSentimentService:
 
         total_reviews = len(results) or 1
         summary = (
-            f"Objective updated: focus on sentence-level sentiment analysis with dependency parsing, "
-            f"not token-level classification, and without removing emojis. Cleaning is limited to "
-            f"{', '.join(self.cleaning_steps[:-1]).lower()}, while {self.cleaning_steps[-1].lower()} is preserved. "
+            f"Web system updated to use the saved TF-IDF vectorizer and sentiment model. "
+            f"Sentence segmentation and dependency parsing are still shown in the admin dashboard, while cleaning is limited to "
+            f"{', '.join(self.cleaning_steps[:-1]).lower()} and {self.cleaning_steps[-1].lower()}. "
             f"Out of {len(results)} submitted review(s), {counts['positive']} are positive, "
             f"{counts['neutral']} are neutral, and {counts['negative']} are negative."
         )
